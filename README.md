@@ -137,14 +137,16 @@ FUENTES.md              Fuentes técnicas consultadas
 
 ## Desarrollo y empaquetado
 
-Requiere Node.js y las utilidades `bash`, `zip`, `unzip` y `sha256sum`. No hay dependencias npm externas.
+Requiere Node.js 22.23.2 (la versión está fijada en `.nvmrc`) y las utilidades `bash`, `zip`, `unzip` y `sha256sum`. No hay dependencias npm externas. El proyecto es JavaScript nativo sin TypeScript; por eso no aplica un typecheck separado y el syntax check cubre el parseo.
 
 ```bash
-npm test
-npm run package
+npm ci
+npm run check
 unzip -l dist/sat-pdf-local-0.1.0.zip
 (cd dist && sha256sum -c sat-pdf-local-0.1.0.zip.sha256)
 ```
+
+Los controles individuales son `npm run lint` (syntax check), `npm run format:check`, `npm test` y `npm run build`. La integración continua ejecuta `npm ci` y `npm run check` con el mismo major de Node fijado en `.nvmrc`.
 
 El ZIP contiene `manifest.json`, `content.js`, `README.md`, `PRIVACIDAD.md` y `FUENTES.md` en su raíz. No incluye tests, scripts ni material local privado.
 

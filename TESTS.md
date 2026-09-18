@@ -5,6 +5,7 @@
 Comando:
 
 ```bash
+npm ci
 npm test
 ```
 
@@ -16,6 +17,8 @@ El archivo `tests/content.test.js` ejecuta el content script en un contexto VM s
 
 Estas pruebas **no son una prueba de Chrome**, ni prueban el visor del SAT.
 
+El proyecto usa JavaScript nativo sin TypeScript: no aplica un typecheck separado. `npm run lint` ejecuta `node --check` sobre el código y las pruebas para validar el parseo.
+
 ## Validación estática y del paquete
 
 El empaquetado se realiza con:
@@ -25,6 +28,8 @@ npm run package
 unzip -l dist/sat-pdf-local-0.1.0.zip
 (cd dist && sha256sum -c sat-pdf-local-0.1.0.zip.sha256)
 ```
+
+`npm run format:check` verifica formato textual básico y `npm run check` ejecuta syntax check, formato, pruebas y build. CI ejecuta ese conjunto después de `npm ci`.
 
 El checksum debe contener solo el hash y `sat-pdf-local-0.1.0.zip`, sin rutas absolutas, separadores de directorio ni nombres locales. La validación debe comprobar desde `dist` que `manifest.json` está en la raíz del ZIP y que no aparecen `tests/`, `scripts/`, secretos o datos privados.
 

@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "Independent Manifest V3 extension for a local SAT PDF download request.",
+  "engines": {
+    "node": ">=22.23.2 <23"
+  },
   "scripts": {
+    "lint": "node scripts/syntax-check.js",
+    "format:check": "node scripts/format-check.js",
     "test": "node --test tests/*.test.js",
-    "package": "bash scripts/package.sh"
+    "build": "bash scripts/package.sh",
+    "package": "npm run build",
+    "check": "npm run lint && npm run format:check && npm test && npm run build"
   }
 }
