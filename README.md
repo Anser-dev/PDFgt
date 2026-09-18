@@ -1,133 +1,103 @@
 # SAT PDF Local
 
-Extensión local de Chrome para solicitar manualmente una copia del PDF que el visor autorizado de Aduana Digital ya tiene cargado en el navegador.
+Extensión local para solicitar una copia del PDF que ya está abierto en el visor de Aduana Digital.
 
 > **Herramienta local · No oficial · Sin afiliación con SAT Guatemala**
 
-[Descargar `sat-pdf-local-0.1.0.zip`](https://github.com/Anser-dev/PDFgt/releases/latest/download/sat-pdf-local-0.1.0.zip)
-El enlace funcionará cuando el ZIP esté disponible en la Release pública correspondiente.
+## Descargar
 
-## Inicio rápido
+<p><a href="https://github.com/Anser-dev/PDFgt/releases/latest/download/sat-pdf-local-0.1.0.zip"><strong>⬇️ Descargar SAT PDF Local (ZIP estable)</strong></a></p>
 
-1. Descargá el ZIP desde el enlace anterior.
-2. Descomprimilo en una carpeta local.
-3. Abrí `chrome://extensions`.
-4. Activá **Modo desarrollador**.
-5. Elegí **Cargar descomprimida** y seleccioná la carpeta descomprimida que contiene `manifest.json`.
-6. Abrí el visor autorizado. Si hay un PDF compatible, aparecerá el botón **Descargar PDF**.
+## Instalación fácil
 
-> **Importante:** no es un instalador de doble clic. El ZIP se descomprime y la extensión se carga con **Cargar descomprimida**.
+1. Descarga el [ZIP estable](https://github.com/Anser-dev/PDFgt/releases/latest/download/sat-pdf-local-0.1.0.zip).
+2. Descomprímelo en una carpeta permanente. No lo dejes dentro de Descargas si esa carpeta se limpia automáticamente.
+3. En Chrome, abre `chrome://extensions`.
+4. Activa **Modo desarrollador**.
+5. Pulsa **Cargar descomprimida**.
+6. Elige la carpeta descomprimida que contiene `manifest.json`.
 
-## ¿Qué hace?
+> **Importante:** el ZIP no se instala con doble clic. Primero debes descomprimirlo y luego cargar la carpeta desde Chrome.
 
-- Detecta el visor PDF compatible en cada frame autorizado.
-- Habilita una acción manual cuando existe `window.PDFViewerApplication?.pdfDocument.getData`.
-- Valida que los bytes comiencen con `%PDF-` antes de solicitar la descarga.
-- Genera un nombre local con fecha y hora: `sat-pdf-YYYYMMDD-HHMMSS.pdf`.
-- No intenta iniciar sesión, obtener credenciales ni reproducir solicitudes autenticadas.
+## Cómo usarla
 
-## Cómo funciona
+1. Entra normalmente al sitio del SAT.
+2. Abre **Aduana Digital** y el PDF que necesitas.
+3. Cuando el PDF termine de cargar, pulsa **Descargar PDF**.
+4. Revisa la carpeta de descargas de Chrome.
 
-```mermaid
-flowchart LR
-  A[URL autorizada] --> B[Content script en MAIN]
-  B --> C[Frames autorizados]
-  C --> D[PDFViewerApplication.pdfDocument]
-  D --> E[getData]
-  E --> F[Validación %PDF-]
-  F --> G[Blob y descarga manual]
-```
+La extensión solo solicita la descarga cuando el visor tiene un PDF compatible. No inicia sesión ni pide credenciales.
 
-La configuración declara un único content script en `world: "MAIN"`, con `all_frames: true` y `run_at: "document_idle"`. Cada frame se evalúa de manera independiente. La inyección está limitada al patrón:
+## Si no aparece el botón
 
-```text
-https://cdn.c.sat.gob.gt/aduana-digital/*
-```
+1. Confirma que el PDF terminó de cargar y espera unos segundos.
+2. Recarga la página del PDF y vuelve a esperar.
+3. En `chrome://extensions`, verifica que **SAT PDF Local** esté activada y pulsa **Actualizar**.
+4. Si continúa sin aparecer, el visor o la página pueden no coincidir con el alcance actual de la herramienta.
 
-La extensión no extrae el PDF de la red: usa `getData()` del documento que ya expone el visor compatible en la página.
+No compartas contraseñas, sesiones, documentos ni otros datos privados para resolver este problema.
 
-## Privacidad y seguridad
+## Privacidad y límites
 
-- No hay backend, telemetría, analítica, código remoto ni service worker.
-- No se usan cookies, tokens, credenciales, formularios, almacenamiento persistente ni identificadores del documento.
-- El PDF permanece en el contexto del navegador hasta crear un `Blob` local para solicitar la descarga.
-- La URL temporal del `Blob` se revoca después de la solicitud del navegador.
-- La extensión no evade controles de acceso ni afirma compatibilidad futura con el visor.
+- La extensión no guarda tu contraseña ni tu sesión.
+- No envía PDFs ni información a un servidor.
+- Solo actúa cuando pulsas **Descargar PDF**.
+- Su alcance es limitado a una página y un visor concretos de Aduana Digital.
+- No evade controles de acceso ni reproduce solicitudes autenticadas.
+- La validación real en el sitio del SAT está pendiente; por eso no se promete compatibilidad universal.
 
-La descripción completa está en [PRIVACIDAD.md](PRIVACIDAD.md).
+Consulta los detalles en [PRIVACIDAD.md](PRIVACIDAD.md).
 
-## Permisos y superficie exacta
+<details>
+<summary><strong>Información técnica</strong></summary>
 
-El `manifest.json` no declara `permissions` ni `host_permissions`. Tampoco utiliza las APIs de `downloads`, `tabs`, `scripting`, `storage`, `webNavigation`, `fetch`, `XMLHttpRequest` o `WebSocket`.
+### Manifest y alcance
 
-| Elemento | Alcance |
-| --- | --- |
-| `content_scripts.matches` | `https://cdn.c.sat.gob.gt/aduana-digital/*` |
-| `world` | `MAIN` |
-| `all_frames` | `true`, solo en frames que coincidan con la URL autorizada |
-| Acción | Manual, mediante el botón **Descargar PDF** |
+- Usa **Manifest V3**.
+- Declara un único content script con `world: "MAIN"`, `all_frames: true` y `run_at: "document_idle"`.
+- El patrón exacto de `matches` es:
 
-## Uso
+  ```text
+  https://cdn.c.sat.gob.gt/aduana-digital/*
+  ```
 
-1. Cargá la carpeta descomprimida desde `chrome://extensions`.
-2. Navegá al visor autorizado.
-3. Esperá a que el estado indique **PDF disponible para descarga manual**.
-4. Presioná **Descargar PDF**.
-5. Confirmá la descarga en la ubicación configurada por Chrome.
+- Detecta `window.PDFViewerApplication?.pdfDocument` y requiere `getData()`.
+- Valida que los bytes obtenidos comiencen con `%PDF-` antes de crear la descarga.
+- La descarga se solicita mediante un `Blob` local y un enlace temporal.
 
-Si el botón permanece deshabilitado, el visor todavía no expone un documento compatible o la URL/frame no coincide con el alcance declarado.
+### Permisos y arquitectura
 
-## Actualización
+El `manifest.json` no declara `permissions` ni `host_permissions`. Tampoco usa las APIs `downloads`, `tabs`, `scripting`, `storage`, `webNavigation`, `fetch`, `XMLHttpRequest` o `WebSocket`.
 
-1. Descargá la nueva Release pública.
-2. Descomprimí el ZIP en una carpeta nueva o reemplazá la carpeta anterior.
-3. En `chrome://extensions`, presioná **Actualizar** en la tarjeta de la extensión.
-4. Recargá la página del visor.
+La arquitectura es deliberadamente mínima: un content script en el contexto principal de la página detecta el visor, muestra una interfaz pequeña dentro de un Shadow DOM y, únicamente después de la acción manual, obtiene los bytes, valida la cabecera PDF y solicita la descarga al navegador. No hay backend, service worker, telemetría, almacenamiento persistente ni código remoto.
 
-Verificá el archivo descargado con el checksum publicado junto al ZIP:
+### Desarrollo y comprobaciones
+
+Requiere Node.js 22.23.2 (fijado en `.nvmrc`) y utilidades locales como `bash`, `zip`, `unzip` y `sha256sum`. No hay dependencias npm externas.
 
 ```bash
-cd dist
-sha256sum -c sat-pdf-local-0.1.0.zip.sha256
+npm ci
+npm run check
+npm run build
 ```
 
-## Desinstalación
+`npm run check` incluye comprobación de sintaxis, formato, escaneo local de secretos, pruebas y empaquetado. La CI ejecuta esas comprobaciones después de `npm ci` y también `npm audit --audit-level=low`.
 
-En `chrome://extensions`, ubicá **SAT PDF Local** y elegí **Quitar**. La extensión no guarda datos persistentes y no requiere una limpieza adicional.
+Las pruebas son sintéticas: cubren la conversión de bytes, la validación `%PDF-`, el manifest, el alcance y el empaquetado. No sustituyen una prueba real en Chrome ni la validación manual en SAT.
 
-## Solución de problemas
+El paquete se verifica con:
 
-| Situación | Qué revisar |
-| --- | --- |
-| No aparece el botón | Confirmá que la URL coincida con el patrón autorizado y recargá la página. |
-| El botón sigue deshabilitado | El visor debe exponer `PDFViewerApplication.pdfDocument.getData`; esperá a que termine de cargar el PDF. |
-| La descarga falla | Recargá el visor y probá nuevamente; el documento puede haber cambiado durante la lectura. |
-| Chrome muestra una advertencia | Es esperable al cargar una extensión local no publicada. |
-| El ZIP no carga | Descomprimí el archivo y seleccioná la carpeta que contiene `manifest.json`, no el ZIP. |
+```bash
+unzip -l dist/sat-pdf-local-0.1.0.zip
+(cd dist && sha256sum -c sat-pdf-local-0.1.0.zip.sha256)
+```
 
-Usá la extensión únicamente en contextos autorizados y respetá los términos y políticas aplicables del sitio y del navegador.
+El checksum debe contener solo el hash y `sat-pdf-local-0.1.0.zip`, sin rutas locales. El ZIP incluye en su raíz `manifest.json`, `content.js`, `README.md`, `PRIVACIDAD.md` y `FUENTES.md`.
 
-## Validación conocida
-
-### Ejecutado en este proyecto
-
-- `npm test`: pruebas sintéticas del content script, manifest mínimo, alcance declarado y empaquetado.
-- `npm run package`: generación reproducible del ZIP y checksum portable.
-- `unzip -l dist/sat-pdf-local-0.1.0.zip`: inspección del contenido del paquete.
-- `(cd dist && sha256sum -c sat-pdf-local-0.1.0.zip.sha256)`: verificación del ZIP desde `dist`.
-- Dos ejecuciones consecutivas de `npm run package` con comparación del hash SHA-256.
-
-### Pendiente
-
-- Prueba real en Chrome/Chromium con una página local sintética que exponga un visor PDF compatible.
-- Validación manual en SAT Guatemala, sin credenciales proporcionadas a la extensión y sin afirmar compatibilidad hasta realizarla.
-
-Los detalles están en [TESTS.md](TESTS.md). Esta documentación distingue las pruebas ejecutadas de la validación pendiente; no promete compatibilidad universal.
-
-## Estructura del proyecto
+### Estructura del repositorio
 
 ```text
-extension/              Manifest y content script de la extensión
+extension/              Manifest y content script
 scripts/package.sh      Empaquetado reproducible y checksum
 tests/                  Pruebas automatizadas
 PRIVACIDAD.md           Datos, límites y controles de privacidad
@@ -135,23 +105,6 @@ TESTS.md                Alcance de las pruebas y pendientes
 FUENTES.md              Fuentes técnicas consultadas
 ```
 
-## Desarrollo y empaquetado
+Más información: [PRIVACIDAD.md](PRIVACIDAD.md), [TESTS.md](TESTS.md) y [FUENTES.md](FUENTES.md).
 
-Requiere Node.js 22.23.2 (la versión está fijada en `.nvmrc`) y las utilidades `bash`, `zip`, `unzip` y `sha256sum`. No hay dependencias npm externas. El proyecto es JavaScript nativo sin TypeScript; por eso no aplica un typecheck separado y el syntax check cubre el parseo.
-
-```bash
-npm ci
-npm run check
-unzip -l dist/sat-pdf-local-0.1.0.zip
-(cd dist && sha256sum -c sat-pdf-local-0.1.0.zip.sha256)
-```
-
-Los controles individuales son `npm run lint` (syntax check), `npm run format:check`, `npm run security:scan`, `npm test` y `npm run build`. `npm run security:scan` revisa los archivos de texto tracked con patrones de alta confianza y nunca imprime valores detectados. La integración continua ejecuta `npm ci`, `npm audit --audit-level=low` y `npm run check` con el mismo major de Node fijado en `.nvmrc`.
-
-El ZIP contiene `manifest.json`, `content.js`, `README.md`, `PRIVACIDAD.md` y `FUENTES.md` en su raíz. No incluye tests, scripts ni material local privado.
-
-## Referencias
-
-- [Privacidad](PRIVACIDAD.md)
-- [Pruebas](TESTS.md)
-- [Fuentes primarias](FUENTES.md)
+</details>
