@@ -1,0 +1,10 @@
+{
+  "name": "sat-pdf-local",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent Manifest V3 extension for a local SAT PDF download request.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "package": "bash scripts/package.sh"
+  }
+}

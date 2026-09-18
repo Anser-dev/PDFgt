@@ -1,0 +1,10 @@
+dist/
+coverage/
+*.log
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example
+private/
+tmp/

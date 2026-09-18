@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "SAT PDF Local",
+  "version": "0.1.0",
+  "description": "Identificación local y no oficial para solicitar la descarga del PDF visible en Aduana Digital.",
+  "content_scripts": [
+    {
+      "matches": ["https://cdn.c.sat.gob.gt/aduana-digital/*"],
+      "js": ["content.js"],
+      "all_frames": true,
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ]
+}
