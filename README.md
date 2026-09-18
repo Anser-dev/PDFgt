@@ -146,7 +146,7 @@ unzip -l dist/sat-pdf-local-0.1.0.zip
 (cd dist && sha256sum -c sat-pdf-local-0.1.0.zip.sha256)
 ```
 
-Los controles individuales son `npm run lint` (syntax check), `npm run format:check`, `npm test` y `npm run build`. La integración continua ejecuta `npm ci` y `npm run check` con el mismo major de Node fijado en `.nvmrc`.
+Los controles individuales son `npm run lint` (syntax check), `npm run format:check`, `npm run security:scan`, `npm test` y `npm run build`. `npm run security:scan` revisa los archivos de texto tracked con patrones de alta confianza y nunca imprime valores detectados. La integración continua ejecuta `npm ci`, `npm audit --audit-level=low` y `npm run check` con el mismo major de Node fijado en `.nvmrc`.
 
 El ZIP contiene `manifest.json`, `content.js`, `README.md`, `PRIVACIDAD.md` y `FUENTES.md` en su raíz. No incluye tests, scripts ni material local privado.
 

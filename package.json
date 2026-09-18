@@ -10,8 +10,9 @@
     "lint": "node scripts/syntax-check.js",
     "format:check": "node scripts/format-check.js",
     "test": "node --test tests/*.test.js",
+    "security:scan": "node scripts/secret-scan.js",
     "build": "bash scripts/package.sh",
     "package": "npm run build",
-    "check": "npm run lint && npm run format:check && npm test && npm run build"
+    "check": "npm run lint && npm run format:check && npm run security:scan && npm test && npm run build"
   }
 }

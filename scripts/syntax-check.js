@@ -5,7 +5,9 @@ const files = [
   "tests/content.test.js",
   "tests/manifest.test.js",
   "tests/package.test.js",
+  "tests/secret-scan.test.js",
   "scripts/format-check.js",
+  "scripts/secret-scan.js",
   "scripts/syntax-check.js"
 ];
 

@@ -11,11 +11,13 @@ const files = [
   "package.json",
   "package-lock.json",
   "scripts/package.sh",
+  "scripts/secret-scan.js",
   "scripts/syntax-check.js",
   "scripts/format-check.js",
   "tests/content.test.js",
   "tests/manifest.test.js",
   "tests/package.test.js",
+  "tests/secret-scan.test.js",
   "extension/content.js",
   "extension/manifest.json"
 ];
